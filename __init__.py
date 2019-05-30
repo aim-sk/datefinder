@@ -98,8 +98,13 @@ class DateFinder(object):
         # For well formatted string, we can already let dateutils parse them
         # otherwise self._find_and_replace method might corrupt them
         try:
+            ## Match strings must be at least 3 characters long
+            ## < 3 tends to be garbage
+            if len(date_string) < 3:
+                return None
+                
             as_dt = parser.parse(date_string, default=self.base_date)
-        except ValueError:
+        except (ValueError, OverflowError):
             # replace tokens that are problematic for dateutil
             date_string, tz_string = self._find_and_replace(date_string, captures)
 
